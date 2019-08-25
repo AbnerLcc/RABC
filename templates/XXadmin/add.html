@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>添加页面</title>
+
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.css">
+    <style>
+
+        input, select {
+            display: block;
+            margin-top: 10px;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        .my_row {
+            margin-top: 10px;
+        }
+
+        .my_label {
+            margin-top: 10px;
+            margin-left: 10px;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+
+        }
+
+        .my_add {
+            margin-top: 19px;
+        }
+
+        /* 去除文件输入框边框*/
+        #FileField input {
+            border: none;
+            background-color: #fff;
+        }
+
+        .my_span {
+            display: block;
+            margin-top: 19px;
+        }
+    </style>
+</head>
+<body>
+
+{% include "XXadmin/form.html" %}
+
+<script src="/static/jquery-3.4.1.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/setupajax.js"></script>
+<script>
+
+
+// 外键字段处理
+    function fun(url){
+            window.open(url,""," height=200,weight=300,top=100,left=100")
+    }
+
+    function add(data) {
+       var optionEle =document.createElement("option");
+       $(optionEle).attr("value",data.pk);
+       $(optionEle).attr("selected","selected");
+       $(optionEle).text(data.text) ;
+       $('#'+data.ForeignKeyLabel_id).append(optionEle)
+    }
+
+
+
+
+    // q清除错误信息
+    $('input').click(function () {
+        $(this).parent().parent().next().text("")
+    });
+
+    $('select').click(function () {
+        $(this).parent().parent().next().text("")
+    });
+
+
+
+   //  图片显示处理
+    $("#FileField").find("[type=file]").change(function () {
+        //创建读取文本对象,
+        var ele = $(this);
+        var id = ele.attr("id");
+
+        var file = this.files[0];
+        var reader = new FileReader();
+
+        //   防止中途取消报错,空内容test判断会出错
+        if (ele.val()){
+            if (/image\/\w+/.test(file.type)) {
+
+                reader.readAsDataURL(file);
+                reader.onload = function (ev) {
+                    var img = document.createElement("img");
+                    var label = document.createElement("label");
+
+
+                    $(img).attr("src", this.result);
+                    $(img).css({'width': '60px', 'height': '60px'});
+
+                    $(label).attr('for', id);
+                    $(label).append(img);
+                    $(ele).parent().after(label);
+                    $(".my_span").text("")
+
+                };
+
+            }
+
+            else {
+
+                reader.readAsBinaryString(file);
+                reader.onload = function (f) {//显示文件
+                    /** var p = document.createElement("p");
+                     $(p).attr('for', id).text(this.result.name);
+                     $(ele).after(p);
+                     $(ele).addClass("hide");
+                     **/
+                    text1 = $(ele).val();
+                    $(".my_span").text(text1)
+                }
+            }
+        }
+
+    });
+
+    $("#FileField").find("[type=file]").click(function () {
+        $(this).parent().parent().find("img").parent().remove();
+        $(this).removeClass("hide");
+        $(".my_span").text("请选择 上传文件");
+    })
+</script>
+</body>
+</html>

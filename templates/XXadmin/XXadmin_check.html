@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>查看</title>
+
+    <!-- 添加网页标题图标,一般是16*16规格,在ps中可以设计 -->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.css">
+    <link rel="stylesheet" href="/static/sweetalert/sweetalert.css">
+
+    <style>
+        .btn a {
+            color: black;
+        }
+
+        .row {
+            margin-top: 20px;
+        }
+
+        .search_input {
+
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            border-radius: 4px;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        .delete {
+            color: red;
+        }
+
+        #action {
+            padding: 7px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            margin-left: 15px;
+        }
+
+        .a_active {
+            color: #555;
+            text-decoration: none;
+            background-color: #f5f5f5;
+        }
+
+        .head_1 {
+            font-size: 28px;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-6">
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-sm-2 col-md-2 col-xs-2">
+            <div class="list-group">
+                {% for foo in request.session.mean %}
+                    {% if request.path == foo.mean_url %}
+                        <a href="{{ foo.mean_url }}" class="list-group-item active">{{ foo.mean_title }}</a>
+                    {% else %}
+                        <a href="{{ foo.mean_url }}" class="list-group-item">{{ foo.mean_title }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-sm-10 col-md-10 col-xs-10">
+            <div class="panel panel-default">
+
+                <!-- 搜索框 -->
+                <div class="panel-heading text-center clearfix">
+
+                    {% if show_list.config.search_list %}
+                        <div class="pull-left head_1">
+                            {{ verbose_name }}
+                        </div>
+                        <form action="" class="pull-right" method="get">
+                            <input type="text" class="search_input" placeholder="Search for..." name="key_word"
+                                   value="{{ show_list.config.key_word }}">
+                            <span class="">
+                    <button class="btn btn-default" type="submit">搜索</button>
+                </span>
+                        </form><!-- /input-group -->
+
+                    {% else %}
+                        <div class="head_1">{{ verbose_name }}</div>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-sm-10 col-md-10 col-xs-10  col-md-offset-1 col-sd-offset-1 col-xs-offset-1">
+
+                            <button class="btn btn-primary pull-right"><a href="{{ add_url }}"
+                                                                          style="color: white">添加数据</a></button>
+
+
+
+                        <form action="" method="post" class="form_action">
+                            {% csrf_token %}
+                            {% if mamy_action %}
+                                <div>
+                                    <button class="btn btn-primary" type="submit">批量处理</button>
+                                    <label for="action">
+                                        <select name="action" id="action">
+                                            <option value="">------------</option>
+                                            {% for i in mamy_action %}
+                                                <option value="{{ i.name }}">{{ i.desc }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </label>
+                                </div>
+                            {% endif %}
+
+
+
+                            <table class="table table-hover table-bordered text-center">
+                                <thead>
+                                <tr>
+                                    {% for title in thead %}
+
+                                        <th>{{ title }}</th>
+
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+                                {% for foo in tbody %}
+                                    <!-- 拿到的是一个列表 -->
+
+                                    <tr>
+                                        {% for item in foo %}
+
+                                            <td>{{ item }}</td>
+
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </form>
+
+
+                        <!-- 页码数 -->
+                        <div class="col-md-10 col-md-offset-2">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    {% for page in show_list.pagination.get_page_html %}
+                                        {{ page|safe }}
+                                    {% endfor %}
+                                </ul>
+                            </nav>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-md-2">
+                    <div class="list-group">
+                        {% for link,tag in link_list.items %}
+                            <a href="#" class="list-group-item active disabled">{{ link }}</a>
+                            {% for foo in tag %}
+                                {{ foo|safe }}
+                            {% endfor %}
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/jquery-3.4.1.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/sweetalert/sweetalert.min.js"></script>
+<script>
+    $(".control_all").click(function () {
+        if ($(this).prop("checked")) {
+            $(".item_choice").prop("checked", true)
+        } else {
+            $(".item_choice").prop("checked", false)
+
+        }
+    });
+    $(".delete").click(function () {
+        var _url = $(this).attr("href");
+        console.log(_url);
+        swal({
+                title: "",
+                text: "你确定要删除吗",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "确认删除!",
+                closeOnConfirm: false,
+                cancelButtonText: "取消",
+                allowOutsideClick: true
+
+
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    location.href = _url
+                }
+
+            });
+    });
+
+</script>
+</body>
+</html>
+

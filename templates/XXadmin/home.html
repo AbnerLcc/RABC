@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>单元表管理</title>
+    <!-- 添加网页标题图标,一般是16*16规格,在ps中可以设计 -->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.css">
+    <style>
+        .my_container {
+            margin: 100px;
+        !important;
+            overflow: hidden;
+        }
+        .head_1{
+                font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+<div class=" my_container">
+    <div class="panel panel-default">
+        <div class="panel-heading text-center head_1">表单管理</div>
+        <table class="table  table-hover table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>表名</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{ tr_html|safe }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="/static/jquery-3.4.1.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+
+
+</body>
+</html>

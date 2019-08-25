@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>编辑页面</title>
+
+    <!-- 添加网页标题图标,一般是16*16规格,在ps中可以设计 -->
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/fontawesome/css/font-awesome.css">
+    <style>
+        input, select {
+            display: block;
+            margin-top: 10px;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        .my_row {
+            margin-top: 100px;
+        }
+
+        .my_label {
+            margin-top: 10px;
+            margin-left: 10px;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+
+
+        }
+
+        .my_add {
+            margin-top: 19px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="row my_row">
+        <div class="col-md-8 col-md-offset-2">
+            <form action="" method="post" novalidate class="form-horizontal" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for file in form %}
+                    <div class="row">
+                        <div class="col-md-2 text-right my_label"><label
+                                for="{{ file.id_for_label }}">{{ file.label }}</label>
+                        </div>
+                        <div class="col-md-8" {% if file.is_field %}id='FileField'{% endif %}>
+                            {{ file }}
+                        </div>
+
+                        {% if file.is_pop %}
+                            <div class="col-md-1 text-left my_add">
+                                <a onclick="fun('{{ file.url }}')" class="pull-left">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                    <div class="col-md-offset-2">
+                        <span class=" text-danger">&emsp;{{ file.errors.0 }}</span>
+                    </div>
+
+                {% endfor %}
+                <div class="col-md-offset-2 col-md-8">
+                    <button class="btn-primary btn form-control" type="submit" style="margin-top: 10px">提交</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/jquery-3.4.1.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script>
+
+
+     // 外键字段处理
+    function fun(url){
+            window.open(url,""," height=200,weight=300,top=100,left=100")
+    }
+
+    function add(data) {
+       var optionEle =document.createElement("option");
+       $(optionEle).attr("value",data.pk);
+       $(optionEle).attr("selected","selected");
+       $(optionEle).text(data.text) ;
+       $('#'+data.ForeignKeyLabel_id).append(optionEle)
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    $('input').click(function () {
+        $(this).parent().parent().next().text("")
+    });
+
+    $('select').click(function () {
+        $(this).parent().parent().next().text("")
+    });
+
+
+    $("#FileField").find("[type=file]").change(function () {
+        var ele = $(this);
+        var id = ele.attr("id");
+
+        var file = this.files[0];
+        var reader = new FileReader();
+        if (ele.val()) {
+            if (/image\/\w+/.test(file.type)) {
+
+                reader.readAsDataURL(file);
+                reader.onload = function (ev) {
+                    var img = document.createElement("img");
+                    var label = document.createElement("label");
+
+
+                    $(img).attr("src", this.result);
+                    $(img).css({'width': '60px', 'height': '60px'});
+
+                    $(label).attr('for', id);
+                    $(label).append(img);
+                    $(ele).after(label);
+                    $(ele).addClass("hide")
+
+                };
+
+            }
+
+            else {
+
+                reader.readAsBinaryString(file);
+                reader.onload = function (f) {//显示文件
+                    /** var p = document.createElement("p");
+                     $(p).attr('for', id).text(this.result.name);
+                     $(ele).after(p);
+                     $(ele).addClass("hide");
+                     **/
+                    var span = document.createElement("span");
+                    var label = document.createElement("label");
+
+
+                    $(span).text(ele.val()).addClass("sapn1");
+                    $(label).attr('for', id);
+                    $(label).append(span);
+                    $(ele).after(label);
+                    $(ele).addClass("hide")
+
+                }
+            }
+        }
+
+
+    });
+    $("#FileField").find("[type=file]").click(function () {
+        $(this).removeClass("hide");
+        $(".sapn1").parent().remove();
+    })
+
+</script>
+
+</body>
+</html>

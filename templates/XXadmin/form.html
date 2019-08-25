@@ -1,0 +1,43 @@
+<div class="container">
+
+    <div class="row my_row">
+        <div class="col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2">
+            <form action="" method="post" novalidate class="form-horizontal" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for file in form %}
+                    <div class="row">
+                        <div class="col-md-2 text-right my_label"><label
+                                for="{{ file.id_for_label }}">{{ file.label }}</label>
+                        </div>
+                        <div class="col-md-8" {% if file.is_field %}id='FileField'{% endif %}>
+                            {% if file.is_field %}
+                                <label for="{{ file.id_for_label }}"><span class="my_span">请选择 上传文件</span></label>
+                                <p class="hide"> {{ file }}</p>
+                            {% else %}
+                                {{ file }}
+                            {% endif %}
+                        </div>
+
+                        {% if file.is_pop %}
+                            <div class="col-md-1 text-left my_add">
+                                <a onclick="fun('{{ file.url }}')" class="pull-left">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                    <div class="col-md-offset-2">
+                        <span class=" text-danger">&emsp;{{ file.errors.0 }}</span>
+                    </div>
+
+                {% endfor %}
+                <div class="col-md-offset-2 col-md-8">
+                    <button class="btn-primary btn form-control" type="submit" style="margin-top: 10px">提交</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
